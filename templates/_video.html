@@ -1,0 +1,18 @@
+<turbo-frame id="video-{{ video.id }}">
+    <li>
+        <div class="video {% if video.data is none %} loading {% elif video.data == -1 %} error {% endif %}">
+            {% if video.data is none %}
+                <div class="loader-5">
+                    <span></span>
+                </div>
+            {% else %}
+                <img class="thumbnail" src="{{ video.thumbnail }}"/>
+                <a class="name">{{ video.name }}</a>
+                <a class="duration">{{ video.show_duration }}</a>
+                <form method="POST" action="{{ url_for('delete', id=video.id) }}">
+                    <button type="submit" class="delete fa fa-trash"> </button>
+                </form>
+            {% endif %}
+        </div>
+    </li>
+</turbo-frame>

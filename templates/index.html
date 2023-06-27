@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block head %}
+{{ turbo() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endblock head %}
+
+{% block content %}
+    <turbo-frame id="all">
+        <div class="player">
+            {% include '_video_playing.html' %}
+        </div>
+        <turbo-frame id="playlist">
+            <ul class="playlist">
+                {% for video in videos %}
+                    {% include '_video.html' %}
+                {% endfor %}
+            </ul>
+        </turbo-frame>
+    </turbo-frame>
+{% endblock content %}
