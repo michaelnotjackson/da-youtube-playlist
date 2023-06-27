@@ -13,8 +13,7 @@ button.delete {
     display: none;
 }
 
-
-.video:hover + button.delete{
+.video:hover button.delete{
     display: inline-block !important;
     border: none;
     background: none;
@@ -23,13 +22,15 @@ button.delete {
     padding: 0;
 }
 
-.video:hover {
-    border: 10px;
+.video {
+    display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
 }
 
-.video {
-    border-width: 10px;
-    border-color: black;
+.name {
+	padding: 10px;
 }
 
 .video .loading {
