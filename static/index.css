@@ -10,16 +10,21 @@
 }
 
 button.delete {
-    display: none;
+    opacity: 0%;
+	border: none;
+    background: none;
+	cursor: pointer;
+    margin: 0;
+    padding: 0;
+	color: #5e5e5e;
 }
 
 .video:hover button.delete{
-    display: inline-block !important;
-    border: none;
-    background: none;
-    cursor: pointer;
-    margin: 0;
-    padding: 0;
+    opacity: 100%;
+}
+
+button.delete:hover {
+	color: black;
 }
 
 .video {
@@ -29,16 +34,16 @@ button.delete {
 	align-items: center;
 }
 
+li {
+	width: 900px;
+}
+
 .name {
 	padding: 10px;
 }
 
 .video .loading {
     display: none;
-}
-
-ul {
-    list-style-type: none;
 }
 
 .thumbnail {

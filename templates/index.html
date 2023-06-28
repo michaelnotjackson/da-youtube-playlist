@@ -12,7 +12,7 @@
             {% include '_video_playing.html' %}
         </div>
         <turbo-frame id="playlist">
-            <ul class="playlist">
+            <ol class="playlist">
                 {% for video in videos %}
                     {% include '_video.html' %}
                 {% endfor %}
