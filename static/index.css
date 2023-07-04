@@ -1,41 +1,65 @@
+:root {
+	--text: #e5dcf4;
+	--background: #0b0613;
+	--primary-button: #5f2169;
+	--secondary-button: #2b0d20;
+	--accent: #69214e;	
+}
+
+html, body {
+	background-color: var(--background);
+}
+
 .content {
     display: flex;
     justify-content: center;
-    padding-top: 10em;
+}
+.player {
+	display: flex;
+}
+span.playing-plug {
+	height: 360px;
+	width: 640px;
+	background-color: black;
 }
 
-.video {
-    display: flex;
-    justify-content: center;
-}
-
-button.delete {
+button.options {
     opacity: 0%;
 	border: none;
     background: none;
 	cursor: pointer;
-    margin: 0;
+    margin: 3px;
     padding: 0;
-	color: #5e5e5e;
+	color: var(--secondary-button);
+	width: 20px;
+	height: auto;
 }
 
-.video:hover button.delete{
+.video:hover button.options{
     opacity: 100%;
 }
 
-button.delete:hover {
+button.options:hover {
 	color: black;
+}
+
+a {
+	color: var(--text);
 }
 
 .video {
     display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
+    flex-direction: row;
+    justify-content: left;
+    padding: 10px;
+    align-items: center;
+    background-color: var(--accent);
+    height: 2em;
+    width: 528px;
 }
 
 li {
-	width: 900px;
+	width: fit-content;
 }
 
 .name {

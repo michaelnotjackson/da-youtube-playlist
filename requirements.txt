@@ -23,6 +23,7 @@ simple-websocket==0.10.1
 six==1.16.0
 Turbo-Flask==0.8.4
 urllib3==2.0.3
+waitress==2.1.2
 Werkzeug==2.3.6
 wsproto==1.2.0
 yarg==0.1.9

@@ -15,6 +15,7 @@ class Video:
         self.data = None
         self.duration = None
         self.name = None
+        self.embed = None
     
     async def create(self, link: str, httpSession: aiohttp.ClientSession):
         self.link = link
@@ -22,6 +23,7 @@ class Video:
         print(f'Creating {self.id}')
         self.code = self.parse_id()
         self.thumbnail = self.get_thumbnail_link()
+        self.embed = self.get_embed_link()
         self.data = None
         await self.parse_data()
     
@@ -44,22 +46,21 @@ class Video:
             params = {'id': self.code, 'key': YOUTUBE_API_KEY,
                 'fields': 'items(snippet(title),contentDetails(duration))',
                 'part': 'snippet,contentDetails'}
-            async with self.session:
-                print(f'Parsing for {self.code}')
-                async with self.session.get(f'https://www.googleapis.com/youtube/v3/videos?{ parse.urlencode(params) }') as response:
-                    try:
-                        print(f'Parse finished for {self.code}')
-                        response.raise_for_status()
-                    except HTTPError as http_error:
-                        print(f'HTTP error occurred: {http_error}')
-                        self.data = -1
-                    except Exception as error:
-                        print(f'Other error occurred: {error}')
-                        self.data = -1
-                    else:
-                        self.data = await response.json()
-                        self.duration = self.parse_duration()
-                        self.name = self.data['items'][0]['snippet']['title']
+            print(f'Parsing for {self.code}')
+            async with self.session.get(f'https://www.googleapis.com/youtube/v3/videos?{ parse.urlencode(params) }') as response:
+                try:
+                    print(f'Parse finished for {self.code}')
+                    response.raise_for_status()
+                except HTTPError as http_error:
+                    print(f'HTTP error occurred: {http_error}')
+                    self.data = -1
+                except Exception as error:
+                    print(f'Other error occurred: {error}')
+                    self.data = -1
+                else:
+                    self.data = await response.json()
+                    self.duration = self.parse_duration()
+                    self.name = self.data['items'][0]['snippet']['title']
     
     def parse_duration(self):
         duration = self.data['items'][0]['contentDetails']['duration'][1:]
@@ -84,3 +85,11 @@ class Video:
     
     def get_thumbnail_link(self):
         return f'https://img.youtube.com/vi/{ self.code }/mqdefault.jpg'
+    
+    def get_embed_link(self):
+        return f''
+    
+    def __eq__(self, other):
+        if type(other) is type(self):
+            return self.__dict__ == other.__dict__
+        return False

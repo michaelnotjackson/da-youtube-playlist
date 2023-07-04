@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, abort, render_template
+from flask import Flask, redirect, url_for, abort, render_template, jsonify
 from turbo_flask import Turbo
 from classes import Video
 import asyncio
@@ -17,16 +17,24 @@ events = []
 httpSession = None
 pid = None
 lock = asyncio.Lock()
+video_playing = None
 
-def get_video_by_id(id):
+def get_video_by_id(id, b_abort=True):
     video = [video for video in videos if video.id == id]
     if len(video) == 0:
-        abort(404)
+        if b_abort:
+            abort(404)
+        return None
     return video[0]
+
+@app.after_request
+def set_headers(response):
+    response.headers["Referrer-Policy"] = "no-referrer-when-downgrade"
+    return response
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('/index.html', videos=videos)
+    return render_template('/index.html', videos=videos, video_playing=video_playing)
 
 @app.route('/delete/<id>', methods=['POST'])
 def delete(id):
@@ -35,6 +43,53 @@ def delete(id):
     if turbo.can_stream():
         return turbo.stream(
             turbo.remove(f'video-{video.id}'))
+
+def update_queue(id):
+    global video_playing
+    video_playing = get_video_by_id(id, b_abort=False)
+    
+    if video_playing == None:
+        video_playing = Video()
+        return
+    
+    videos.remove(video_playing)
+
+@app.route('/play/<id>', methods=['POST'])
+def play(id):
+    global video_playing
+    
+    update_queue(id)
+    
+    stream = []
+    
+    if not video_playing is None:
+        stream.append(
+            turbo.remove(f'video-{video_playing.id}')
+        )
+    
+    if turbo.can_stream():
+        return turbo.stream(stream)
+
+@app.route('/next', methods=['POST'])
+def next():
+    global video_playing
+    
+    if len(videos) == 0:
+        return jsonify({
+            'video-code': '0'
+        })
+    
+    update_queue(videos[0])
+    
+    if video_playing == Video():
+        return jsonify({
+            'video-code': '0'
+        })
+    
+    return jsonify({
+        'video-code': video_playing.code
+    })
+        
 
 async def create_video(link: str):
     global videos, events, httpSession, lock
@@ -68,6 +123,7 @@ async def main():
     pid = os.getpid()
     httpSession = aiohttp.ClientSession()
     await create_video('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
+    await create_video('https://www.youtube.com/watch?v=Tb1_93M8SXA')
 
     while True:
         for e in events:

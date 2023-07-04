@@ -1,16 +1,63 @@
-{% extends 'base.html' %}
-{% block head %}
-{{ turbo() }}
-<link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-{% endblock head %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation Alerts music player</title>
+    {{ turbo() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    
+    <script>
+        var tag = document.createElement('script');
 
-{% block content %}
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+            height: '360',
+            width: '640',
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+            });
+        }
+
+        function onPlayerReady(event) {
+            event.target.playVideo();
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.ENDED) {
+                // Play next video
+                $.post({
+                    url: 'http://127.0.0.1:5000',
+                    complete: function(data) {
+                        var response = jQuery.parseJSON(data);
+                        var code = response['video-code'];
+                        player.loadVideoById(code)
+                    }
+                })
+            }
+        }
+
+        function playVideoByCode(code) {
+            player.loadVideoById(code);
+        }
+
+        
+    </script>
+</head>
+<body>
     <turbo-frame id="all">
-        <div class="player">
+        <turbo-frame class="player" id="player-wrapper">
             {% include '_video_playing.html' %}
-        </div>
+        </turbo-frame>
         <turbo-frame id="playlist">
             <ol class="playlist">
                 {% for video in videos %}
@@ -19,4 +66,5 @@
             </ul>
         </turbo-frame>
     </turbo-frame>
-{% endblock content %}
+</body>
+</html>

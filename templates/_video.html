@@ -10,7 +10,10 @@
                 <a class="name">{{ video.name }}</a>
                 <a class="duration">{{ video.show_duration }}</a>
                 <form method="POST" action="{{ url_for('delete', id=video.id) }}">
-                    <button type="submit" class="delete fa fa-trash"> </button>
+                    <button type="submit" class="options delete fa fa-trash"> </button>
+                </form>
+                <form method="POST" action="{{ url_for('play', id=video.id) }}">
+                    <button type="submit" class="options play fa fa-play" onclick="playVideoByCode('{{ video.code }}')"></button>
                 </form>
             {% endif %}
         </div>
