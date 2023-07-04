@@ -1,0 +1,12 @@
+read -p "Enter youtube data api key: " youtube_api
+read -p "Enter donation alerts api key: " da_api
+
+read -p "Override current config? (Y/n): " confirm && [[ $confirm == [yY] || $config == [yY][eE][sS] ]] || exit 1
+
+rm -rf config.py
+touch config.py
+
+cat > config.py << EOF
+YOUTUBE_API_KEY = '$youtube_api'
+DONATION_ALERTS_API_KEY = '$da_api'
+EOF
